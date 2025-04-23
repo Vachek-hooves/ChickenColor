@@ -17,37 +17,75 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const ShopTab = () => {
   const [showSkins, setShowSkins] = useState(false);
   // const [unlock, setUnlock] = useState(false);
-  const {balance} = useStore();
+  const {
+    balance,
+    roostersShop,
+    inventoryRoosters,
+    setInventoryRoosters,
+    setBalance,
+    setRoostersShop,
+  } = useStore();
   const navigation = useNavigation();
 
   // useEffect(() => {
   //   AsyncStorage.clear();
   // }, []);
 
-  const roostersShop = [
-    {
-      title: 'Fowl Red',
-      quantity: '10 worms',
-      image: require('../../../assets/images/rosster1.png'),
-    },
-    {
-      title: 'Fowl Blue',
-      quantity: '20 worms',
-      image: require('../../../assets/images/rooster2.png'),
-    },
-    {
-      title: 'Fowl Elite',
-      quantity: '50 worms',
-      image: require('../../../assets/images/rooster3.png'),
-    },
-  ];
+  // const roostersShop = [
+  //   {
+  //     title: 'Fowl Red',
+  //     quantity: '10 worms',
+  //     image: require('../../../assets/images/rosster1.png'),
+  //     equiped: true,
+  //   },
+  //   {
+  //     title: 'Fowl Blue',
+  //     quantity: '20 worms',
+  //     image: require('../../../assets/images/rooster2.png'),
+  //     equiped: false,
+  //   },
+  //   {
+  //     title: 'Fowl Elite',
+  //     quantity: '50 worms',
+  //     image: require('../../../assets/images/rooster3.png'),
+  //     equiped: false,
+  //   },
+  // ];
 
-  const unlockArticle = () => {
-    if (balance >= 20) {
-      setUnlock(true);
-    }
-    if (unlock) {
-      navigation.navigate('Article');
+  // const unlockArticle = () => {
+  //   if (balance >= 20) {
+  //     setUnlock(true);
+  //   }
+  //   if (unlock) {
+  //     navigation.navigate('Article');
+  //   }
+  // };
+  console.log('roostersShop', roostersShop);
+
+  const buyRooster = rooster => {
+    const filtered = inventoryRoosters.find(val => val.id === rooster.id);
+
+    if (!filtered) {
+      const inventory = [...inventoryRoosters, rooster];
+
+      const filtered = inventory.map(rooster => {
+        return {...rooster, equiped: true};
+      });
+
+      const filteredShop = roostersShop.map(roost => {
+        if (roost.id === rooster.id)
+          return {
+            ...roost,
+            equiped: true,
+          };
+        return roost;
+      });
+
+      if (balance >= 20) {
+        setInventoryRoosters(filtered);
+        setRoostersShop(filteredShop);
+      }
+      setBalance(balance - rooster.quantity);
     }
   };
 
@@ -100,9 +138,12 @@ const ShopTab = () => {
                 <Image source={rooster.image} />
                 <Text style={styles.secondaryText}>{rooster.title}</Text>
                 <TouchableOpacity
+                  onPress={() => buyRooster(rooster)}
                   activeOpacity={0.7}
                   style={styles.playBtnContainer}>
-                  <Text style={styles.secondaryText}>{rooster.quantity}</Text>
+                  <Text style={styles.secondaryText}>
+                    {rooster.equiped ? 'Equip' : rooster.quantity + ' worms'}
+                  </Text>
                 </TouchableOpacity>
               </View>
             ))}

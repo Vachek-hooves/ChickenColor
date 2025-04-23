@@ -14,30 +14,18 @@ import {useStore} from '../../store/context';
 const InventoryTab = () => {
   const [showSkins, setShowSkins] = useState(false);
 
-  const {balance, inventoryArticles, getArticles} = useStore();
+  const {
+    balance,
+    inventoryArticles,
+    getArticles,
+    roostersShop,
+    inventoryRoosters,
+  } = useStore();
   const navigation = useNavigation();
 
   useEffect(() => {
     getArticles();
   }, []);
-
-  const roostersShop = [
-    {
-      title: 'Fowl Red',
-      quantity: '10 worms',
-      image: require('../../../assets/images/rosster1.png'),
-    },
-    {
-      title: 'Fowl Blue',
-      quantity: '20 worms',
-      image: require('../../../assets/images/rooster2.png'),
-    },
-    {
-      title: 'Fowl Elite',
-      quantity: '50 worms',
-      image: require('../../../assets/images/rooster3.png'),
-    },
-  ];
 
   return (
     <View style={styles.container}>
@@ -83,14 +71,16 @@ const InventoryTab = () => {
               justifyContent: 'center',
               gap: 13,
             }}>
-            {roostersShop.map(rooster => (
+            {inventoryRoosters.map(rooster => (
               <View style={styles.roosterCard} key={rooster.title}>
                 <Image source={rooster.image} />
                 <Text style={styles.secondaryText}>{rooster.title}</Text>
                 <TouchableOpacity
                   activeOpacity={0.7}
                   style={styles.playBtnContainer}>
-                  <Text style={styles.secondaryText}>{rooster.quantity}</Text>
+                  <Text style={styles.secondaryText}>
+                    {rooster.equiped && 'Equip'}
+                  </Text>
                 </TouchableOpacity>
               </View>
             ))}

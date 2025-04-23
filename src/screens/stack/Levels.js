@@ -1,5 +1,6 @@
 import {useNavigation} from '@react-navigation/native';
 import {
+  Alert,
   Image,
   ImageBackground,
   ScrollView,
@@ -8,42 +9,57 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {useStore} from '../../store/context';
 
 const Levels = () => {
   const navigation = useNavigation();
 
-  const levels = [
-    {
-      title: '1',
-      passed: false,
-      locked: false,
-    },
-    {
-      title: '2',
-      passed: false,
-      locked: true,
-    },
-    {
-      title: '3',
-      passed: false,
-      locked: true,
-    },
-    {
-      title: '4',
-      passed: false,
-      locked: true,
-    },
-    {
-      title: '5',
-      passed: false,
-      locked: true,
-    },
-    {
-      title: '6',
-      passed: false,
-      locked: true,
-    },
-  ];
+  const {levels, setLevels, currentIdx, setCurrentIdx} = useStore();
+
+  const resetGameProgress = () => {
+    Alert.alert(
+      'Notification',
+      'Are you sure want to reset all game progress?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: () => {
+            const resetLevels = levels.map(level => {
+              return {...level, passed: false, locked: true};
+            });
+            setLevels(resetLevels);
+            setCurrentIdx(0);
+          },
+        },
+      ],
+      {cancelable: false},
+    );
+  };
+
+  const navigateToLevels = level => {
+    switch (level) {
+      case '1':
+        navigation.navigate('Game');
+      case '2':
+        navigation.navigate('Game');
+      case '3':
+        navigation.navigate('Game');
+      case '4':
+        navigation.navigate('Game');
+      case '5':
+        navigation.navigate('Game');
+      case '6':
+        navigation.navigate('Game');
+
+      default:
+        return;
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -57,6 +73,7 @@ const Levels = () => {
                 Levels
               </Text>
               <TouchableOpacity
+                onPress={() => resetGameProgress()}
                 activeOpacity={0.7}
                 style={{position: 'absolute', right: 30}}>
                 <Image source={require('../../../assets/images/reload.png')} />
@@ -71,10 +88,31 @@ const Levels = () => {
               flexWrap: 'wrap',
               gap: 10,
             }}>
-            {levels.map(level => (
-              <View key={level.title} style={styles.levelContainer}>
-                <Text style={styles.levelText}>{level.title}</Text>
-              </View>
+            {levels.map((level, idx) => (
+              <TouchableOpacity
+                onPress={() => navigateToLevels(level.title)}
+                disabled={!level.passed && currentIdx !== idx}
+                activeOpacity={0.7}
+                key={level.title}
+                style={[
+                  styles.levelContainer,
+
+                  level.passed
+                    ? {backgroundColor: '#87E5FF', borderColor: '#0C6269'}
+                    : {backgroundColor: '#AAE3CC', borderColor: '#1E4818'},
+                  idx === currentIdx && {
+                    backgroundColor: '#F6B1B1',
+                    borderColor: '#EC7FAC',
+                  },
+                ]}>
+                <Text
+                  style={[
+                    styles.levelText,
+                    level.passed ? {color: '#0C6269'} : {color: '#1E4818'},
+                  ]}>
+                  {level.title}
+                </Text>
+              </TouchableOpacity>
             ))}
           </View>
         </ScrollView>
@@ -92,7 +130,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Chango-Regular',
     fontSize: 69,
     fontWeight: '400',
-    color: '#1E4818',
   },
   levelContainer: {
     width: '48%',
