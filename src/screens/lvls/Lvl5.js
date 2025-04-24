@@ -206,7 +206,7 @@ const Lvl5 = () => {
 
         <Image
           source={require('../../../assets/images/Union.png')}
-          style={{width: '65%'}}
+          style={{width: 255}}
         />
         <Image
           source={require('../../../assets/images/RectBot.png')}
