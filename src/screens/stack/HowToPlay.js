@@ -48,7 +48,8 @@ const HowToPlay = () => {
                   onPress={() => navigation.navigate('Game')}>
                   <Text style={styles.secondaryText}>Play now</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('HomeTab')}>
                   <Text style={styles.secondaryText}>Back home</Text>
                 </TouchableOpacity>
               </View>
@@ -88,6 +89,7 @@ const styles = StyleSheet.create({
     borderRadius: 52,
     marginTop: 48,
     // alignItems: 'center',
+    marginBottom: 150,
     gap: 30,
   },
   playBtnContainer: {

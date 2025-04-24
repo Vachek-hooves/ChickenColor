@@ -1,6 +1,4 @@
-import {useNavigation} from '@react-navigation/native';
 import {
-  Button,
   Image,
   ScrollView,
   StyleSheet,
@@ -9,14 +7,13 @@ import {
   View,
 } from 'react-native';
 import {roosters} from '../../data/roosters';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {useStore} from '../../store/context';
 import RoosterCard from '../../components/RoosterCard';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ShopTab = () => {
   const [showSkins, setShowSkins] = useState(false);
-  // const [unlock, setUnlock] = useState(false);
+
   const {
     balance,
     roostersShop,
@@ -25,42 +22,6 @@ const ShopTab = () => {
     setBalance,
     setRoostersShop,
   } = useStore();
-  const navigation = useNavigation();
-
-  // useEffect(() => {
-  //   AsyncStorage.clear();
-  // }, []);
-
-  // const roostersShop = [
-  //   {
-  //     title: 'Fowl Red',
-  //     quantity: '10 worms',
-  //     image: require('../../../assets/images/rosster1.png'),
-  //     equiped: true,
-  //   },
-  //   {
-  //     title: 'Fowl Blue',
-  //     quantity: '20 worms',
-  //     image: require('../../../assets/images/rooster2.png'),
-  //     equiped: false,
-  //   },
-  //   {
-  //     title: 'Fowl Elite',
-  //     quantity: '50 worms',
-  //     image: require('../../../assets/images/rooster3.png'),
-  //     equiped: false,
-  //   },
-  // ];
-
-  // const unlockArticle = () => {
-  //   if (balance >= 20) {
-  //     setUnlock(true);
-  //   }
-  //   if (unlock) {
-  //     navigation.navigate('Article');
-  //   }
-  // };
-  console.log('roostersShop', roostersShop);
 
   const buyRooster = rooster => {
     const filtered = inventoryRoosters.find(val => val.id === rooster.id);
@@ -84,8 +45,8 @@ const ShopTab = () => {
       if (balance >= 20) {
         setInventoryRoosters(filtered);
         setRoostersShop(filteredShop);
+        setBalance(balance - rooster.quantity);
       }
-      setBalance(balance - rooster.quantity);
     }
   };
 
@@ -132,6 +93,7 @@ const ShopTab = () => {
               flexWrap: 'wrap',
               justifyContent: 'center',
               gap: 13,
+              marginBottom: 150,
             }}>
             {roostersShop.map(rooster => (
               <View style={styles.roosterCard} key={rooster.title}>

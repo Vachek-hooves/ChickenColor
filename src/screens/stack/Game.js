@@ -1,7 +1,6 @@
 import {useNavigation} from '@react-navigation/native';
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {
-  Alert,
   Image,
   ImageBackground,
   StyleSheet,
@@ -20,28 +19,60 @@ const Game = () => {
   const [worms, setWorms] = useState([]);
   const [glasses, setGlasses] = useState({red: 0, pink: 0, yellow: 0});
   const [bomb, setBomb] = useState(false);
-  const [timer, setTimer] = useState(60);
-  const [roosterPosition, setRoosterPosition] = useState({x: 100, y: 300});
-  const {levels, setLevels, setCurrentIdx} = useStore();
+  const {
+    levels,
+    setLevels,
+    setCurrentIdx,
+    setBestTime,
+    bestTime,
+    inventoryRoosters,
+    setBalance,
+  } = useStore();
+  const [timeLeft, setTimeLeft] = useState(59);
+  const [isRunning, setIsRunning] = useState(false);
+  const timerRef = useRef(null);
 
   useEffect(() => {
     Orientation.lockToPortrait();
   }, []);
 
-  // Timer
   useEffect(() => {
-    const countdown = setInterval(() => {
-      setTimer(prev => Math.max(prev - 1, 0));
-    }, 1000);
-
-    return () => clearInterval(countdown);
-  }, []);
+    pauseTimer();
+  }, [isVisible]);
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsVisible(true);
-    }, 60000);
+    const startTimer = () => {
+      if (!isRunning && timeLeft > 0) {
+        setIsRunning(true);
+        timerRef.current = setInterval(() => {
+          setTimeLeft(prevTime => {
+            if (prevTime <= 1) {
+              clearInterval(timerRef.current);
+              setIsRunning(false);
+              return 0; // Stop at 0
+            }
+            return prevTime - 1;
+          });
+        }, 1000);
+      }
+    };
+    startTimer();
   }, []);
+
+  // Pause the timer
+  const pauseTimer = () => {
+    if (isRunning) {
+      clearInterval(timerRef.current);
+      setIsRunning(false);
+    }
+  };
+
+  // Stop the timer and reset
+  const stopTimer = () => {
+    clearInterval(timerRef.current);
+    setIsRunning(false);
+    setTimeLeft(60); // Reset to initial time
+  };
 
   // Generate worms and bombs on interval
   useEffect(() => {
@@ -49,7 +80,7 @@ const Game = () => {
       const newWorms = Array.from({length: 5}).map(() => ({
         id: Math.random(),
         color: ['red', 'pink', 'yellow'][Math.floor(Math.random() * 3)],
-        isBomb: Math.random() < 0.2, // 20% chance of being a bomb
+        isBomb: Math.random() < 0.05, // 5% chance of being a bomb
       }));
       setWorms(newWorms);
     }, 1000);
@@ -73,6 +104,9 @@ const Game = () => {
             : prevGlasses[worm.color],
       }));
     }
+    if (glasses.red === 3 && glasses.pink === 3 && glasses.yellow === 3) {
+      pauseTimer();
+    }
   };
 
   const isGameWon = Object.values(glasses).every(count => count >= 3);
@@ -88,15 +122,26 @@ const Game = () => {
       }
       return level;
     });
-    setCurrentIdx(prev => prev + 1);
+
+    if (bestTime < timeLeft) {
+      setBestTime(timeLeft);
+    }
+
     setLevels(unlockLevel);
-    navigation.navigate('HomeTab');
+    stopTimer();
+    setBalance(prev => prev + 9);
+    setIsVisible(false);
+    setCurrentIdx(prev => prev + 1);
+    navigation.navigate('Levels');
   };
 
   return (
     <ImageBackground
       source={require('../../../assets/images/gameBg.png')}
-      style={{...styles.container, filter: isVisible ? 'blur(4)' : null}}>
+      style={{
+        ...styles.container,
+        filter: isVisible ? 'blur(4)' : null || isGameWon ? 'blur(4)' : null,
+      }}>
       <View style={styles.gameContainer}>
         <Image
           source={require('../../../assets/images/bg.png')}
@@ -170,7 +215,8 @@ const Game = () => {
 
         <View style={styles.timerContainer}>
           <Text style={styles.timer}>
-            {`00:${timer.toString().padStart(2, '0')}`}
+            {Math.floor(timeLeft / 60) + '0'}:
+            {timeLeft % 60 < 10 ? `0${timeLeft % 60} ` : timeLeft % 60}
           </Text>
         </View>
 
@@ -254,12 +300,18 @@ const Game = () => {
           ))}
         </View>
         <View style={styles.roosterContainer}>
-          <Image
-            source={require('../../../assets/images/rosster1.png')} // Replace with rooster image
-          />
+          {inventoryRoosters.length === 0 ? (
+            <Image source={require('../../../assets/images/rosster1.png')} />
+          ) : (
+            <View>
+              {inventoryRoosters.map(rooster => {
+                if (rooster.selected) {
+                  return <Image source={rooster.image} key={rooster.id} />;
+                }
+              })}
+            </View>
+          )}
         </View>
-
-        {/* {isGameWon && <Text style={styles.winText}>You Win!</Text>} */}
       </View>
 
       {isGameWon && (
@@ -287,7 +339,9 @@ const Game = () => {
             <TouchableOpacity
               style={styles.playBtnContainer}
               onPress={() => {
-                navigation.navigate('Game');
+                navigation.navigate('Lvl2'),
+                  setIsVisible(false),
+                  setCurrentIdx(prev => prev + 1);
               }}>
               <Text style={styles.secondaryText}>Next Level</Text>
             </TouchableOpacity>
@@ -328,6 +382,12 @@ const Game = () => {
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate('HomeTab'), setIsVisible(false);
+                if (bestTime < timeLeft) {
+                  setBestTime(timeLeft);
+                }
+                setBalance(prev => prev + 9);
+                setLevels(unlockLevel);
+                stopTimer();
               }}>
               <Text style={styles.secondaryText}>Back home</Text>
             </TouchableOpacity>
@@ -446,15 +506,9 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
   },
-  wormText: {fontSize: 18, fontWeight: 'bold'},
+
   roosterContainer: {position: 'absolute', right: -60, bottom: -130},
 
-  controls: {
-    position: 'absolute',
-    bottom: 50,
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
   glassesContainer: {
     flexDirection: 'row',
     justifyContent: 'center',

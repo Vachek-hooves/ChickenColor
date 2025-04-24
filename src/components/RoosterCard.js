@@ -5,13 +5,8 @@ import {useNavigation} from '@react-navigation/native';
 import {useState} from 'react';
 
 const RoosterCard = ({rooster}) => {
-  const {
-    balance,
-    setBalance,
-    inventoryArticles,
-    setInventoryArticles,
-    saveArticle,
-  } = useStore();
+  const {balance, setBalance, inventoryArticles, setInventoryArticles} =
+    useStore();
   const navigation = useNavigation();
   const [unlock, setUnlock] = useState(false);
 
@@ -25,10 +20,13 @@ const RoosterCard = ({rooster}) => {
 
       if (balance >= 20) {
         setUnlock(true);
-        saveArticle(inventory, rooster);
+        // saveArticle(inventory, rooster);
+        setInventoryArticles(inventory);
       }
       if (!unlock) {
-        setBalance(balance - 20);
+        if (balance > 20) {
+          setBalance(balance - 20);
+        }
       }
     }
     if (unlock) {
@@ -47,7 +45,7 @@ const RoosterCard = ({rooster}) => {
       <Image source={rooster.image} style={styles.image} />
       <View
         style={{
-          width: '98%',
+          width: '99%',
           height: 110,
           backgroundColor: '#AAE3CC',
           position: 'absolute',
@@ -125,6 +123,7 @@ const styles = StyleSheet.create({
     borderRadius: 52,
     borderWidth: 5,
     borderColor: '#1E4818',
+    resizeMode: 'cover',
   },
 });
 

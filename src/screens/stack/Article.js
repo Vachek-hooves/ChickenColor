@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingVertical: 15,
     borderRadius: 52,
-    marginTop: 66,
+    marginTop: 70,
     alignItems: 'center',
     marginBottom: 24,
     gap: 6,
@@ -103,6 +103,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 16,
+    marginBottom: 150,
   },
   image: {
     width: '100%',

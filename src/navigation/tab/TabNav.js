@@ -59,7 +59,7 @@ const TabNav = () => {
 const styles = StyleSheet.create({
   tabBar: {
     position: 'absolute',
-    bottom: 75,
+    bottom: 60,
     elevation: 0,
     backgroundColor: '#FFE88D',
     borderRadius: 52,
@@ -67,9 +67,9 @@ const styles = StyleSheet.create({
     borderTopWidth: 5,
     borderTopColor: '#E9BB67',
     borderColor: '#E9BB67',
-    height: 70,
+    height: 75,
     marginHorizontal: 33,
-    paddingTop: 10,
+    paddingTop: 15,
   },
 });
 

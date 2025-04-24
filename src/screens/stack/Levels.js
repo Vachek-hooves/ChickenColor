@@ -45,16 +45,22 @@ const Levels = () => {
     switch (level) {
       case '1':
         navigation.navigate('Game');
+        break;
       case '2':
-        navigation.navigate('Game');
+        navigation.navigate('Lvl2');
+        break;
       case '3':
-        navigation.navigate('Game');
+        navigation.navigate('Lvl3');
+        break;
       case '4':
-        navigation.navigate('Game');
+        navigation.navigate('Lvl4');
+        break;
       case '5':
-        navigation.navigate('Game');
+        navigation.navigate('Lvl5');
+        break;
       case '6':
-        navigation.navigate('Game');
+        navigation.navigate('Lvl6');
+        break;
 
       default:
         return;
@@ -87,6 +93,7 @@ const Levels = () => {
               marginHorizontal: 30,
               flexWrap: 'wrap',
               gap: 10,
+              marginBottom: 150,
             }}>
             {levels.map((level, idx) => (
               <TouchableOpacity

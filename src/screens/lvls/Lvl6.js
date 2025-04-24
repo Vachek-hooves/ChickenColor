@@ -13,7 +13,7 @@ import CustomModal from '../../components/CustomModal';
 import {useStore} from '../../store/context';
 import Orientation from 'react-native-orientation-locker';
 
-const Lvl3 = () => {
+const Lvl6 = () => {
   const navigation = useNavigation();
   const [isVisible, setIsVisible] = useState(false);
   const [worms, setWorms] = useState([]);
@@ -80,7 +80,7 @@ const Lvl3 = () => {
       const newWorms = Array.from({length: 5}).map(() => ({
         id: Math.random(),
         color: ['red', 'pink', 'yellow'][Math.floor(Math.random() * 3)],
-        isBomb: Math.random() < 0.15, // 15% chance of being a bomb
+        isBomb: Math.random() < 0.5, // 20% chance of being a bomb
       }));
       setWorms(newWorms);
     }, 1000);
@@ -99,21 +99,21 @@ const Lvl3 = () => {
       setGlasses(prevGlasses => ({
         ...prevGlasses,
         [worm.color]:
-          prevGlasses[worm.color] <= 4
+          prevGlasses[worm.color] <= 5
             ? prevGlasses[worm.color] + 1
             : prevGlasses[worm.color],
       }));
     }
-    if (glasses.red === 5 && glasses.pink === 5 && glasses.yellow === 5) {
+    if (glasses.red === 6 && glasses.pink === 6 && glasses.yellow === 6) {
       pauseTimer();
     }
   };
 
-  const isGameWon = Object.values(glasses).every(count => count >= 5);
+  const isGameWon = Object.values(glasses).every(count => count >= 6);
 
   const unlockLevel = () => {
     const unlockLevel = levels.map((level, idx) => {
-      if (idx === 2) {
+      if (idx === 5) {
         return {
           ...level,
           passed: true,
@@ -129,9 +129,8 @@ const Lvl3 = () => {
 
     setLevels(unlockLevel);
     stopTimer();
-    setBalance(prev => prev + 15);
+    setBalance(prev => prev + 18);
     setIsVisible(false);
-    setCurrentIdx(prev => prev + 1);
     navigation.navigate('Levels');
   };
 
@@ -168,36 +167,36 @@ const Lvl3 = () => {
                   color === 'pink' && {
                     backgroundColor: '#F6B1B1',
                   },
-                  color === 'pink' && glasses.pink > 4
+                  color === 'pink' && glasses.pink > 5
                     ? {
                         height: 186,
                       }
                     : {
-                        height: 37.2 * glasses[color],
+                        height: 31 * glasses[color],
                       },
 
                   styles.glass,
                   color === 'yellow' && {
                     backgroundColor: '#F7D22B',
                   },
-                  color === 'yellow' && glasses.yellow > 4
+                  color === 'yellow' && glasses.yellow > 5
                     ? {
                         height: 186,
                       }
                     : {
-                        height: 37.2 * glasses[color],
+                        height: 31 * glasses[color],
                       },
 
                   styles.glass,
                   color === 'red' && {
                     backgroundColor: '#ff6347',
                   },
-                  color === 'red' && glasses.red > 4
+                  color === 'red' && glasses.red > 5
                     ? {
                         height: 186,
                       }
                     : {
-                        height: 37.2 * glasses[color],
+                        height: 31 * glasses[color],
                       },
                 ]}></View>
             </View>
@@ -331,7 +330,7 @@ const Lvl3 = () => {
 
             <Text style={styles.mainText}>{'Level Passed!'}</Text>
             <Text style={{...styles.secondaryText, marginBottom: 20}}>
-              Earned: 15 worms
+              Earned: 18 worms
             </Text>
           </View>
 
@@ -339,15 +338,13 @@ const Lvl3 = () => {
             <TouchableOpacity
               style={styles.playBtnContainer}
               onPress={() => {
-                navigation.navigate('Lvl4'),
-                  setIsVisible(false),
-                  setCurrentIdx(prev => prev + 1);
+                navigation.navigate('HomeTab'), setIsVisible(false);
               }}>
               <Text style={styles.secondaryText}>Next Level</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => unlockLevel()}>
+            {/* <TouchableOpacity onPress={() => unlockLevel()}>
               <Text style={styles.secondaryText}>Back home</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </CustomModal>
       )}
@@ -385,7 +382,7 @@ const Lvl3 = () => {
                 if (bestTime < timeLeft) {
                   setBestTime(timeLeft);
                 }
-                setBalance(prev => prev + 15);
+                setBalance(prev => prev + 18);
                 setLevels(unlockLevel);
                 stopTimer();
               }}>
@@ -528,4 +525,4 @@ const styles = StyleSheet.create({
   winText: {fontSize: 30, fontWeight: 'bold', color: 'green', marginTop: 20},
 });
 
-export default Lvl3;
+export default Lvl6;

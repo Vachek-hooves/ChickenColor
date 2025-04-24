@@ -18,14 +18,32 @@ const InventoryTab = () => {
     balance,
     inventoryArticles,
     getArticles,
-    roostersShop,
     inventoryRoosters,
+    setInventoryRoosters,
   } = useStore();
   const navigation = useNavigation();
 
-  useEffect(() => {
-    getArticles();
-  }, []);
+  console.log('inventoryRoosters', inventoryRoosters);
+
+  // useEffect(() => {
+  //   getArticles();
+  // }, []);
+
+  const selectRooster = roost => {
+    const filtered = inventoryRoosters.map(rooster => {
+      if (rooster.id === roost.id) {
+        return {...rooster, selected: true};
+      } else if (rooster.id === 1) {
+        return {...rooster, selected: false};
+      } else if (rooster.id === 2) {
+        return {...rooster, selected: false};
+      } else if (rooster.id === 3) {
+        return {...rooster, selected: false};
+      }
+      return rooster;
+    });
+    setInventoryRoosters(filtered);
+  };
 
   return (
     <View style={styles.container}>
@@ -70,23 +88,31 @@ const InventoryTab = () => {
               flexWrap: 'wrap',
               justifyContent: 'center',
               gap: 13,
+              marginBottom: 150,
             }}>
             {inventoryRoosters.map(rooster => (
               <View style={styles.roosterCard} key={rooster.title}>
                 <Image source={rooster.image} />
                 <Text style={styles.secondaryText}>{rooster.title}</Text>
                 <TouchableOpacity
+                  onPress={() => selectRooster(rooster)}
                   activeOpacity={0.7}
-                  style={styles.playBtnContainer}>
+                  style={[
+                    styles.playBtnContainer,
+                    rooster.selected && {
+                      backgroundColor: '#FFE88D',
+                      borderColor: '#F7D22B',
+                    },
+                  ]}>
                   <Text style={styles.secondaryText}>
-                    {rooster.equiped && 'Equip'}
+                    {rooster.selected ? 'Equiped' : 'Equip'}
                   </Text>
                 </TouchableOpacity>
               </View>
             ))}
           </View>
         ) : (
-          <View>
+          <View style={{marginBottom: 150}}>
             {inventoryArticles.map(rooster => (
               <View
                 key={rooster.title}

@@ -1,5 +1,6 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {createContext, useContext, useState} from 'react';
+import {gameLevels} from '../data/levels';
+import {roostersShopData} from '../data/roostersShopData';
 
 export const StoreContext = createContext();
 
@@ -8,106 +9,19 @@ export const useStore = () => {
 };
 
 export const StoreProvider = ({children}) => {
-  const [balance, setBalance] = useState(120);
+  const [balance, setBalance] = useState(0);
   const [inventoryArticles, setInventoryArticles] = useState([]);
   const [inventoryRoosters, setInventoryRoosters] = useState([]);
   const [currentIdx, setCurrentIdx] = useState(0);
-  const [roostersShop, setRoostersShop] = useState([
-    {
-      id: 1,
-      title: 'Fowl Red',
-      quantity: 10,
-      image: require('../../assets/images/rosster1.png'),
-      equiped: true,
-      selected: true,
-    },
-    {
-      id: 2,
-      title: 'Fowl Blue',
-      quantity: 20,
-      image: require('../../assets/images/rooster2.png'),
-      equiped: false,
-      selected: false,
-    },
-    {
-      id: 3,
-      title: 'Fowl Elite',
-      quantity: 50,
-      image: require('../../assets/images/rooster3.png'),
-      equiped: false,
-      selected: false,
-    },
-  ]);
-  const [levels, setLevels] = useState([
-    {
-      title: '1',
-      passed: false,
-      locked: false,
-    },
-    {
-      title: '2',
-      passed: false,
-      locked: true,
-    },
-    {
-      title: '3',
-      passed: false,
-      locked: true,
-    },
-    {
-      title: '4',
-      passed: false,
-      locked: true,
-    },
-    {
-      title: '5',
-      passed: false,
-      locked: true,
-    },
-    {
-      title: '6',
-      passed: false,
-      locked: true,
-    },
-  ]);
-
-  const saveArticle = async (inventory, rooster) => {
-    const unlockArticle = inventory.map(art => {
-      if (art.id === rooster.id) {
-        return {
-          ...art,
-          locked: false,
-        };
-      }
-      return art;
-    });
-
-    try {
-      await AsyncStorage.setItem('articles', JSON.stringify(unlockArticle));
-      setInventoryArticles(unlockArticle);
-    } catch (error) {
-      console.error('Error ', error);
-    }
-  };
-
-  const getArticles = async () => {
-    try {
-      const storedData = await AsyncStorage.getItem('articles');
-      if (storedData) {
-        setInventoryArticles(JSON.parse(storedData));
-      }
-    } catch (error) {
-      console.error('Error', error);
-    }
-  };
+  const [bestTime, setBestTime] = useState(0);
+  const [roostersShop, setRoostersShop] = useState(roostersShopData);
+  const [levels, setLevels] = useState(gameLevels);
 
   const value = {
     balance,
     setBalance,
     inventoryArticles,
     setInventoryArticles,
-    saveArticle,
-    getArticles,
     levels,
     setLevels,
     currentIdx,
@@ -116,6 +30,8 @@ export const StoreProvider = ({children}) => {
     setRoostersShop,
     inventoryRoosters,
     setInventoryRoosters,
+    bestTime,
+    setBestTime,
   };
   return (
     <StoreContext.Provider value={value}>{children}</StoreContext.Provider>

@@ -1,6 +1,5 @@
 import {useNavigation} from '@react-navigation/native';
 import {
-  Button,
   Image,
   ScrollView,
   StyleSheet,
@@ -8,21 +7,30 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {useStore} from '../../store/context';
 
 const HomeTab = () => {
   const navigation = useNavigation();
+  const {bestTime} = useStore();
 
   return (
     <View style={styles.container}>
       <ScrollView>
-        <View>
+        <View
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginHorizontal: 33,
+          }}>
           <Image
             source={require('../../../assets/images/tab/mainLogo.png')}
             style={styles.image}
           />
           <View style={styles.welcomePartContainer}>
             <Text style={styles.mainText}>Welcome!</Text>
-            <Text style={styles.secondaryText}>Best time : 12s</Text>
+            <Text style={styles.secondaryText}>
+              Best time : {60 - bestTime}s
+            </Text>
 
             <TouchableOpacity
               style={styles.playBtnContainer}
@@ -46,7 +54,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#439638',
-    padding: 25,
+    // padding: 25,
   },
   mainText: {
     fontFamily: 'Chango-Regular',
@@ -60,7 +68,11 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     color: '#272727',
   },
-  image: {width: '100%', marginBottom: 20, marginTop: 30, height: 400},
+  image: {
+    marginBottom: 20,
+    marginTop: 50,
+    borderRadius: 40,
+  },
   welcomePartContainer: {
     backgroundColor: '#FFE88D',
     borderWidth: 5,
@@ -70,6 +82,7 @@ const styles = StyleSheet.create({
     borderRadius: 52,
     alignItems: 'center',
     gap: 30,
+    marginBottom: 170,
   },
   playBtnContainer: {
     height: 60,
