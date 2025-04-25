@@ -117,6 +117,7 @@ const ShopTab = () => {
             ))}
           </View>
         )}
+        <View style={{height: 150}} />
       </ScrollView>
     </View>
   );
